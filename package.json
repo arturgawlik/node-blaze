@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "install": "cmake-js compile",
-    "test": "node ./test/test_binding.js"
+    "test": "node --experimental-addon-modules ./test/test_binding.js"
   },
   "gypfile": true,
   "name": "node-blaze",
@@ -35,5 +35,6 @@
     "napi_versions": [
       10
     ]
-  }
+  },
+  "type": "module"
 }

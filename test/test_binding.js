@@ -1,8 +1,17 @@
-// TODO: rewrite to node:test
-const NodeBlaze = require("../lib/binding.js");
-const assert = require("assert");
+import { test } from "node:test";
+import assert from "node:assert";
+import NodeBlaze from "../lib/binding.js"
 
-assert(NodeBlaze, "The expected module is undefined");
+test('should work basic 1', () => {
+    const instance = new NodeBlaze("mr-yeoman");
+    assert(instance.greet, "The expected method is not defined");
+    assert.strictEqual(instance.greet("kermit"), "mr-yeoman", "Unexpected value returned");
+});
+
+test('should work basic ', () => {
+    assert.doesNotThrow(testBasic, undefined, "testBasic threw an expection");
+    assert.throws(testInvalidParams, undefined, "testInvalidParams didn't throw");
+});
 
 function testBasic() {
     const instance = new NodeBlaze("mr-yeoman");
@@ -13,8 +22,3 @@ function testBasic() {
 function testInvalidParams() {
     const instance = new NodeBlaze();
 }
-
-assert.doesNotThrow(testBasic, undefined, "testBasic threw an expection");
-assert.throws(testInvalidParams, undefined, "testInvalidParams didn't throw");
-
-console.log("Tests passed- everything looks OK!");
