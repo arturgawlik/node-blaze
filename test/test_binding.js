@@ -4,5 +4,9 @@ import NodeBlaze from "../lib/binding.js"
 
 test('should return Success', () => {
     const instance = new NodeBlaze();
-    assert(instance.runBlaze(), "The expected string 'Success' was not returned.");
+    const result = instance.runBlaze(`{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "number"
+  }`, '1234');
+    assert.equal(result, true, "The expected string 'Success' was not returned.");
 });

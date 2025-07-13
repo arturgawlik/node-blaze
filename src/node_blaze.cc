@@ -1,5 +1,5 @@
 #include "node_blaze.h"
-#include <iostream>
+#include "sourcemeta/core/json_value.h"
 
 #include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/blaze/evaluator.h>
@@ -14,14 +14,16 @@ NodeBlaze::NodeBlaze(const Napi::CallbackInfo &info) : ObjectWrap(info) {}
 Napi::Value NodeBlaze::RunBlaze(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
+  Napi::String js_schema_str = info[0].As<Napi::String>();
+  Napi::String js_json_str = info[1].As<Napi::String>();
+
   // (1) Get a JSON Schema
-  const auto schema{sourcemeta::core::parse_json(R"JSON({
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "number"
-})JSON")};
+  // TODO: make sure about this conversation from Napi::String with Utf8Value
+  const sourcemeta::core::JSON schema{
+      sourcemeta::core::parse_json(js_schema_str.Utf8Value())};
 
   // (2) Compile the JSON Schema into an optimised representation
-  const auto compiled_schema{sourcemeta::blaze::compile(
+  const sourcemeta::blaze::Template compiled_schema{sourcemeta::blaze::compile(
       schema,
 
       // These options allow you tweak how Blaze works,
@@ -38,16 +40,16 @@ Napi::Value NodeBlaze::RunBlaze(const Napi::CallbackInfo &info) {
       sourcemeta::blaze::Mode::FastValidation)};
 
   // (3) Get a JSON instance
-  const sourcemeta::core::JSON instance{"Hello Blaze!"};
+  // TODO: maybe there is some smart way of passing Object (Napi::Value) to
+  // this sourcemeta::core::JSON instead of parsing it here?
+  const sourcemeta::core::JSON instance{
+      sourcemeta::core::parse_json(js_json_str.Utf8Value())};
 
   // (4) Validate the instance against the schema
   sourcemeta::blaze::Evaluator evaluator;
-  const auto result{evaluator.validate(compiled_schema, instance)};
-  if (result) {
-    return Napi::String::New(env, "Success");
-  } else {
-    return Napi::String::New(env, "Error");
-  }
+  const bool result{evaluator.validate(compiled_schema, instance)};
+
+  return Napi::Boolean::New(env, result);
 }
 
 /**
