@@ -1,46 +1,53 @@
 #include "node_blaze.h"
+#include <iostream>
+
+#include <sourcemeta/blaze/compiler.h>
+#include <sourcemeta/blaze/evaluator.h>
+
+#include <sourcemeta/core/json.h>
+#include <sourcemeta/core/jsonschema.h>
 
 using namespace Napi;
 
-NodeBlaze::NodeBlaze(const Napi::CallbackInfo &info) : ObjectWrap(info) {
+NodeBlaze::NodeBlaze(const Napi::CallbackInfo &info) : ObjectWrap(info) {}
+
+Napi::Value NodeBlaze::RunBlaze(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
-  if (info.Length() < 1) {
-    Napi::TypeError::New(env, "Wrong number of arguments")
-        .ThrowAsJavaScriptException();
-    return;
+  // (1) Get a JSON Schema
+  const auto schema{sourcemeta::core::parse_json(R"JSON({
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "number"
+})JSON")};
+
+  // (2) Compile the JSON Schema into an optimised representation
+  const auto compiled_schema{sourcemeta::blaze::compile(
+      schema,
+
+      // These options allow you tweak how Blaze works,
+      // the JSON Schema vocabularies it understands,
+      // and how to resolve references to external schemas
+      sourcemeta::core::schema_official_walker,
+      sourcemeta::core::schema_official_resolver,
+      sourcemeta::blaze::default_schema_compiler,
+
+      // Fast validation means getting to a boolean result
+      // as fast as possible. Check out the documentation
+      // for how to get detailed error information and/or
+      // collect JSON Schema annotations
+      sourcemeta::blaze::Mode::FastValidation)};
+
+  // (3) Get a JSON instance
+  const sourcemeta::core::JSON instance{"Hello Blaze!"};
+
+  // (4) Validate the instance against the schema
+  sourcemeta::blaze::Evaluator evaluator;
+  const auto result{evaluator.validate(compiled_schema, instance)};
+  if (result) {
+    return Napi::String::New(env, "Success");
+  } else {
+    return Napi::String::New(env, "Error");
   }
-
-  if (!info[0].IsString()) {
-    Napi::TypeError::New(env, "You need to name yourself")
-        .ThrowAsJavaScriptException();
-    return;
-  }
-
-  this->_greeterName = info[0].As<Napi::String>().Utf8Value();
-}
-
-Napi::Value NodeBlaze::Greet(const Napi::CallbackInfo &info) {
-  Napi::Env env = info.Env();
-
-  if (info.Length() < 1) {
-    Napi::TypeError::New(env, "Wrong number of arguments")
-        .ThrowAsJavaScriptException();
-    return env.Null();
-  }
-
-  if (!info[0].IsString()) {
-    Napi::TypeError::New(env, "You need to introduce yourself to greet")
-        .ThrowAsJavaScriptException();
-    return env.Null();
-  }
-
-  Napi::String name = info[0].As<Napi::String>();
-
-  printf("Hello %s\n", name.Utf8Value().c_str());
-  printf("I am %s\n", this->_greeterName.c_str());
-
-  return Napi::String::New(env, this->_greeterName);
 }
 
 /**
@@ -48,10 +55,11 @@ Napi::Value NodeBlaze::Greet(const Napi::CallbackInfo &info) {
    methods defined in C++ class.
 */
 Napi::Function NodeBlaze::GetClass(Napi::Env env) {
-  return DefineClass(env, "NodeBlaze",
-                     {
-                         NodeBlaze::InstanceMethod("greet", &NodeBlaze::Greet),
-                     });
+  return DefineClass(
+      env, "NodeBlaze",
+      {
+          NodeBlaze::InstanceMethod("runBlaze", &NodeBlaze::RunBlaze),
+      });
 }
 
 /**
