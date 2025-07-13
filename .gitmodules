@@ -1,0 +1,3 @@
+[submodule "deps/blaze"]
+	path = deps/blaze
+	url = https://github.com/sourcemeta/blaze.git
