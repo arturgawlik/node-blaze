@@ -29,7 +29,9 @@
   },
   "homepage": "https://github.com/arturgawlik/node-blaze#readme",
   "devDependencies": {
-    "cmake-js": "^7.3.1"
+    "@types/node": "^24.0.14",
+    "cmake-js": "^7.3.1",
+    "typescript": "^5.9.0-dev.20250716"
   },
   "binary": {
     "napi_versions": [

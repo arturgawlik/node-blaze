@@ -18,10 +18,10 @@ add_definitions(-DNAPI_VERSION=10)
 include_directories(${CMAKE_JS_INC})
 
 set(HEADER_FILES
-  "src/node_blaze.h"
+  "src/blaze_node.h"
 )
 set(SOURCE_FILES
-  "src/node_blaze.cc"
+  "src/blaze_node.cc"
 )
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} ${CMAKE_JS_SRC})
