@@ -18,9 +18,9 @@ console.log(result); // false
 
 ### Performance
 
-In my simple (and probably very naive) test https://github.com/arturgawlik/node-blaze/blob/63822e54f9b1c5db5513ed003c1dd21c40a15871/test/performance.ts it seems that blaze is at least couple times faster than `Ajv`:
+In my simple (and probably very naive) test https://github.com/arturgawlik/node-blaze/blob/63822e54f9b1c5db5513ed003c1dd21c40a15871/test/performance.ts it seems that `node-blaze` is at least couple times faster than `Ajv`:
 
 ```text
-blaze: 657.67ms
+node-blaze: 657.67ms
 ajv: 4.754s
 ```
