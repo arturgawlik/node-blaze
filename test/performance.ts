@@ -18,11 +18,11 @@ const runAjv = () => {
   validateFn("1234");
 };
 
-console.time("blaze");
+console.time("node-blaze");
 for (let i = 0; i < 1000; i++) {
   runBlaze();
 }
-console.timeEnd("blaze");
+console.timeEnd("node-blaze");
 
 console.time("ajv");
 for (let i = 0; i < 1000; i++) {
