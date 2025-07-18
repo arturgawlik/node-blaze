@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert";
-import { Blaze } from "../lib/blaze.ts";
+import { Blaze } from "../lib/blaze.js";
 
 test("should pass validation", () => {
   const blaze = new Blaze();
@@ -9,7 +9,7 @@ test("should pass validation", () => {
     type: "number",
   });
   const result = validateFn(1234);
-  assert.equal(result, false);
+  assert.equal(result, true);
 });
 
 test("should do not pass validation", () => {

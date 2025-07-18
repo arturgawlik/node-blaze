@@ -1,17 +1,6 @@
 {
-  "main": "lib/binding.js",
-  "dependencies": {
-    "bindings": "^1.5.0",
-    "node-addon-api": "^8.4.0"
-  },
-  "private": true,
-  "scripts": {
-    "install": "cmake-js compile",
-    "test": "node --experimental-addon-modules ./test/test_binding.js"
-  },
-  "gypfile": true,
   "name": "node-blaze",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Bindings to blaze, high-performance C++ JSON Schema validator",
   "repository": {
     "type": "git",
@@ -28,6 +17,20 @@
     "url": "https://github.com/arturgawlik/node-blaze/issues"
   },
   "homepage": "https://github.com/arturgawlik/node-blaze#readme",
+  "main": "lib/blaze.js",
+  "publish": "publish",
+  "scripts": {
+    "install": "cmake-js compile",
+    "test": "node --test ./dist",
+    "benchmark": "node ./dist/benchmark/benchmark.ts",
+    "build": "cmake-js build",
+    "tsc": "tsc",
+    "": "tsc"
+  },
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "node-addon-api": "^8.4.0"
+  },
   "devDependencies": {
     "@types/node": "^24.0.14",
     "ajv": "^8.17.1",
@@ -38,6 +41,5 @@
     "napi_versions": [
       10
     ]
-  },
-  "type": "module"
+  }
 }

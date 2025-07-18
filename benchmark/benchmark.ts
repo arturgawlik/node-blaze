@@ -1,4 +1,4 @@
-import { Blaze } from "../lib/blaze.ts";
+import { Blaze } from "../lib/blaze.js";
 import { Ajv } from "ajv";
 
 const runBlaze = () => {

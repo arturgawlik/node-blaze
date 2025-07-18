@@ -8,3 +8,4 @@
 /prebuilds/
 /.cache/
 compile_commands.json
+/dist/
