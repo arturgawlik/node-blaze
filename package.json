@@ -1,6 +1,6 @@
 {
   "name": "node-blaze",
-  "version": "0.0.3",
+  "version": "0.0.42",
   "description": "Bindings to blaze, high-performance C++ JSON Schema validator",
   "repository": {
     "type": "git",
@@ -20,11 +20,11 @@
   "main": "lib/blaze.js",
   "scripts": {
     "install": "cmake-js compile",
-    "test": "node --test ./dist",
+    "test": "node --test ./dist/test/**/*.spec.js",
     "benchmark": "node ./dist/benchmark/benchmark.ts",
     "build": "cmake-js build",
     "tsc": "tsc",
-    "publish": "node ./publish.ts"
+    "publish-to-npm": "node ./publish-to-npm.ts"
   },
   "dependencies": {
     "bindings": "^1.5.0",

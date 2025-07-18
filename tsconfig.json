@@ -45,6 +45,6 @@
     "benchmark/**/*",
     "src/**/*",
     "./package.json",
-    "./publish.ts"
+    "./publish-to-npm.ts"
   ]
 }

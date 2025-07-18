@@ -17,7 +17,6 @@ import { Blaze } from "node-blaze";
 
 const blaze = new Blaze();
 const validateFn = blaze.compile({
-  $schema: "https://json-schema.org/draft/2020-12/schema",
   type: "number",
 });
 const result = validateFn("1234");
