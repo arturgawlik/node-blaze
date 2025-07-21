@@ -20,9 +20,17 @@ const retrieveOTP = () => {
   }
 };
 
-const compileTs = () =>
+const runTs = () =>
   promisify(exec)("npm run tsc").then(() =>
-    console.log("✅ typescript compiled")
+    console.log("✅ typescript ran successfully")
+  );
+const runRollup = () =>
+  promisify(exec)("npm run rollup").then(() =>
+    console.log("✅ rollup ran successfully")
+  );
+const copyPackageDist = () =>
+  cp("./package.json", "./dist/package.json").then(() =>
+    console.log("✅ package.json to dist")
   );
 const copyNativeToDist = () =>
   cp("./src", "./dist/src", { recursive: true }).then(() =>
@@ -46,9 +54,11 @@ const npmPublish = () =>
     .then(() => console.log("✅ published to npm"));
 
 retrieveOTP();
-await compileTs();
+await runTs();
+await runRollup();
+await copyPackageDist();
 await copyNativeToDist();
 await copyBlazeLibToDist();
 await copyNativeBuildInstructions();
 await copyReadme();
-await npmPublish();
+// await npmPublish();

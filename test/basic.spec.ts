@@ -1,6 +1,6 @@
 import { describe, test } from "node:test";
 import assert from "node:assert";
-import { Blaze } from "../lib/blaze.js";
+import { Blaze } from "../lib/blaze.ts";
 
 const basicJsonSchema = {
   type: "number",
