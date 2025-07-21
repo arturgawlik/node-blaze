@@ -1,16 +1,21 @@
-// rollup.config.js
 import typescript from '@rollup/plugin-typescript';
 
 /**
  * @type {import('rollup').RollupOptions}
  */
 export default {
-  input: './lib/blaze.ts',
+  input: {
+    'lib/blaze': './lib/blaze.ts'
+  },
   output: {
     dir: 'dist',
     format: 'esm',
   },
   plugins: [
-    typescript()
+    typescript({
+      include: [
+        "./lib/**/*.ts"
+      ]
+    })
   ]
 };

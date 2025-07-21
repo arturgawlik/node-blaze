@@ -17,7 +17,7 @@
     "url": "https://github.com/arturgawlik/node-blaze/issues"
   },
   "homepage": "https://github.com/arturgawlik/node-blaze#readme",
-  "main": "blaze.js",
+  "main": "lib/blaze.js",
   "scripts": {
     "install": "cmake-js compile",
     "test": "node --test ./test/**/*.spec.ts",
