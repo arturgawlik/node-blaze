@@ -10,6 +10,7 @@ export default {
   output: {
     dir: 'dist',
     format: 'esm',
+    sourcemap: true
   },
   plugins: [
     typescript({
