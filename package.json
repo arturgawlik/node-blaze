@@ -1,6 +1,6 @@
 {
   "name": "node-blaze",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "description": "Bindings to blaze, high-performance C++ JSON Schema validator",
   "repository": {
     "type": "git",
