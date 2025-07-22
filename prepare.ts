@@ -1,0 +1,14 @@
+import { promisify } from "node:util";
+import { exec } from "node:child_process";
+
+const runTs = () =>
+  promisify(exec)("npm run tsc").then(() =>
+    console.log("✅ typescript ran successfully")
+  );
+const runRollup = () =>
+  promisify(exec)("npm run rollup").then(() =>
+    console.log("✅ rollup ran successfully")
+  );
+
+await runTs();
+await runRollup();

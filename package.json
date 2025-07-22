@@ -1,6 +1,6 @@
 {
   "name": "node-blaze",
-  "version": "0.0.42",
+  "version": "0.0.48",
   "description": "Bindings to blaze, high-performance C++ JSON Schema validator",
   "repository": {
     "type": "git",
@@ -17,7 +17,13 @@
     "url": "https://github.com/arturgawlik/node-blaze/issues"
   },
   "homepage": "https://github.com/arturgawlik/node-blaze#readme",
-  "main": "lib/blaze.js",
+  "main": "dist/blaze.js",
+  "files": [
+    "dist",
+    "src",
+    "deps",
+    "CMakeLists.txt"
+  ],
   "scripts": {
     "install": "cmake-js compile",
     "test": "node --test ./test/**/*.spec.ts",
@@ -25,7 +31,7 @@
     "build": "cmake-js build",
     "rollup": "rollup -c rollup.config.js",
     "tsc": "tsc",
-    "publish-to-npm": "node ./publish-to-npm.ts"
+    "prepare": "node ./prepare.ts"
   },
   "dependencies": {
     "bindings": "^1.5.0",

@@ -5,7 +5,7 @@ import typescript from '@rollup/plugin-typescript';
  */
 export default {
   input: {
-    'lib/blaze': './lib/blaze.ts'
+    'blaze': './lib/blaze.ts'
   },
   output: {
     dir: 'dist',
