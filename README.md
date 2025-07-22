@@ -31,3 +31,10 @@ In my simple (and probably very naive) test https://github.com/arturgawlik/node-
 node-blaze: 657.67ms
 ajv: 4.754s
 ```
+
+## Maintenance
+
+### Publishing new version to npm
+
+1. Bump version in `package.json`.
+2. Run `npm publish` in project root directory.
