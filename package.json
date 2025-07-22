@@ -31,7 +31,7 @@
     "build": "cmake-js build",
     "rollup": "rollup -c rollup.config.js",
     "tsc": "tsc",
-    "prepare": "node ./prepare.ts"
+    "prepare": "./prepare"
   },
   "dependencies": {
     "bindings": "^1.5.0",
