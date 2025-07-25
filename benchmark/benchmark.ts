@@ -1,31 +1,53 @@
 import { Blaze } from "../lib/blaze.ts";
 import { Ajv } from "ajv";
+import { Bench } from "tinybench";
 
-const runBlaze = () => {
-  const blaze = new Blaze();
-  const validateFn = blaze.compile({
-    $schema: "https://json-schema.org/draft/2020-12/schema",
-    type: "number",
-  });
-  validateFn("1234");
+const schema = {
+  type: "number",
 };
+const valueToValidate = "1234";
+const ajv = new Ajv();
+const ajvCodeOptimize = new Ajv({ code: { optimize: true } });
+const ajvValidateFn = ajv.compile(schema);
+const ajvCodeOptimizeValidateFn = ajvCodeOptimize.compile(schema);
+const blaze = new Blaze();
+const blazeValidateFn = blaze.compile(schema);
 
-const runAjv = () => {
-  const ajv = new Ajv();
-  const validateFn = ajv.compile({
-    type: "number",
+const bench = new Bench({ time: 100 })
+  .add(
+    "ajv - create Ajv instance and validation method every iteration",
+    () => {
+      const ajv = new Ajv();
+      const ajvValidateFn = ajv.compile(schema);
+      ajvValidateFn(valueToValidate);
+    }
+  )
+  .add("ajv - create validation method every iteration", () => {
+    const ajvValidateFn = ajv.compile(schema);
+    ajvValidateFn(valueToValidate);
+  })
+  .add("ajv", () => {
+    ajvValidateFn(valueToValidate);
+  })
+  .add("ajv with code.optimize flag", () => {
+    ajvCodeOptimizeValidateFn(valueToValidate);
+  })
+  .add(
+    "node-blaze - create Blaze instance and validation method every iteration",
+    () => {
+      const blaze = new Blaze();
+      const blazeValidateFn = blaze.compile(schema);
+      blazeValidateFn(valueToValidate);
+    }
+  )
+  .add("node-blaze - create validation method every iteration", () => {
+    const blazeValidateFn = blaze.compile(schema);
+    blazeValidateFn(valueToValidate);
+  })
+  .add("node-blaze", () => {
+    blazeValidateFn(valueToValidate);
   });
-  validateFn("1234");
-};
 
-console.time("node-blaze");
-for (let i = 0; i < 1000; i++) {
-  runBlaze();
-}
-console.timeEnd("node-blaze");
+bench.runSync();
 
-console.time("ajv");
-for (let i = 0; i < 1000; i++) {
-  runAjv();
-}
-console.timeEnd("ajv");
+console.table(bench.table());
