@@ -4,27 +4,40 @@ const native = createRequire(import.meta.url)(
   "../build/Release/node-blaze.node"
 );
 
-const kCanonicalSchema = {
-  $schema: "https://json-schema.org/draft/2020-12/schema",
+const kMetaSchema = {
+  $schema: "http://json-schema.org/draft-07/schema",
 };
 
 type Schema = object;
 type CompiledSchema = object;
 type ObjectToValidate = unknown;
+type ValidationResult = {
+  valid: boolean;
+  errors: {
+    message: string;
+    instanceLocation: string;
+    evaluatePath: string;
+    schemaLocation: string;
+  }[];
+};
 
 const createValidateFn = (compiledSchema: CompiledSchema) => {
   // TODO: provide option and implement option for "sourcemeta::blaze::Mode::Exhaustive" validation
   /**
    * Validates some value against previously provided JSON Schema.
    * @param objToValidate Value that should be validated.
-   * @returns `true` if validation pass, otherwise `false`.
    */
-  return (objToValidate: ObjectToValidate): boolean => {
+
+  return (objToValidate: ObjectToValidate): ValidationResult => {
     // TODO: try to find other solution rather that stringify and then parsing on the C++ land
     //       if other solution can't be find try to maybe some more optimal parsers?
     const jsonObjToValidate = JSON.stringify(objToValidate);
     // TODO: provide some .d.ts for C++ land
-    return native.validate(compiledSchema, jsonObjToValidate);
+    const result: ValidationResult = native.validate(
+      compiledSchema,
+      jsonObjToValidate
+    );
+    return result;
   };
 };
 
@@ -45,16 +58,16 @@ export class Blaze {
    */
   compile(schema: Schema) {
     this.#validateSchema(schema);
-    const schemaWithCanonical = {
-      ...kCanonicalSchema,
+    const schemaWithMeta = {
+      ...kMetaSchema,
       ...schema,
     };
 
-    let compiledSchema = this.#cache.get(schemaWithCanonical);
+    let compiledSchema = this.#cache.get(schemaWithMeta);
     if (!compiledSchema) {
-      let jsonSchema = JSON.stringify(schemaWithCanonical);
+      let jsonSchema = JSON.stringify(schemaWithMeta);
       compiledSchema = native.compile(jsonSchema) as CompiledSchema;
-      this.#cache.set(schemaWithCanonical, compiledSchema);
+      this.#cache.set(schemaWithMeta, compiledSchema);
     }
     return createValidateFn(compiledSchema);
   }

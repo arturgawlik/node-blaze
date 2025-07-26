@@ -1,6 +1,9 @@
 #include "blaze_node.h"
+#include "napi.h"
+#include "sourcemeta/blaze/compiler_output.h"
 #include "sourcemeta/core/json_value.h"
 
+#include <cstdint>
 #include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/blaze/evaluator.h>
 
@@ -38,10 +41,43 @@ Value validate(const CallbackInfo &info) {
 
   sourcemeta::blaze::Evaluator evaluator;
   const auto js_object{sourcemeta::core::parse_json(js_object_json)};
-  const auto result{evaluator.validate(*compiled_schema, js_object)};
+  sourcemeta::blaze::SimpleOutput output{js_object};
 
-  return Boolean::New(env, result);
+  const auto result{
+      evaluator.validate(*compiled_schema, js_object, std::ref(output))};
+
+  const auto js_result = Object::New(env);
+  const auto js_result_errors = Array::New(env);
+  js_result.Set(String::New(env, "valid"), result);
+  js_result.Set(String::New(env, "errors"), js_result_errors);
+  const auto js_result_errors_message_key = String::New(env, "message");
+  const auto js_result_errors_instance_location_key =
+      String::New(env, "instanceLocation");
+  const auto js_result_errors_evaluate_path_key =
+      String::New(env, "evaluatePath");
+  const auto js_result_errors_schema_location_key =
+      String::New(env, "schemaLocation");
+  if (!result) {
+    uint32_t i = 0;
+    for (const auto &entry : output) {
+      const auto js_entry = Object::New(env);
+      js_entry.Set(js_result_errors_message_key,
+                   String::New(env, entry.message));
+      js_entry.Set(js_result_errors_instance_location_key,
+                   String::New(env, sourcemeta::core::to_string(
+                                        entry.instance_location)));
+      js_entry.Set(
+          js_result_errors_evaluate_path_key,
+          String::New(env, sourcemeta::core::to_string(entry.evaluate_path)));
+      js_entry.Set(js_result_errors_schema_location_key,
+                   String::New(env, entry.schema_location.get()));
+      js_result_errors.Set(i++, js_entry);
+    }
+  }
+
+  return js_result;
 }
+
 } // namespace blaze_node
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
